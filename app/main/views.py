@@ -1,8 +1,8 @@
 from . import main
-from flask import render_template,request,redirect,url_for,abort
-from flask_login import login_required
-from ..models import User
-from .forms import UpdateProfile
+from flask import render_template,request,redirect,url_for,abort,flash
+from flask_login import login_required,current_user
+from ..models import User,Post
+from .forms import UpdateProfile,PostForm
 from .. import db,photos
 
 
@@ -17,6 +17,30 @@ def index():
     
     title = 'Home - Welcome to my blog'
     return render_template('index.html', title = title)
+
+@main.route('/post/new',methods = ['GET','POST'])
+@login_required
+def new_post():
+    form = PostForm()
+
+    if form.validate_on_submit():
+        post = Post(title = form.title.data, content = content.form.data, author = current_user)
+        db.session.add(post)
+        db.session.commit()
+        flash('Your post has been created!', 'success')
+        return redirect(url_for('.home'))
+    title = 'New Post' 
+    return render_template('posts.html',title = title,form = form)
+
+@main.route('/home', methods = ['GET','POST'])
+def home():
+    '''
+    View root page function that returns the home page and its data
+    '''
+    posts = Post.query.all()
+    title = 'Home - Welcome to My BLog'
+    return render_template('home.html', title = title, posts = posts)
+
 
 @main.route('/user/<uname>')
 def profile(uname):
