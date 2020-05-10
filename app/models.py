@@ -52,5 +52,14 @@ class Post(db.Model):
     date_posted = db.Column(db.DateTime, default = datetime.utcnow)
     user_id = db.Column(db.Integer,db.ForeignKey('users.id'))
 
+    def save_post(self):
+        db.session.add(self)
+        db.session.commit()
+
+    @classmethod
+    def get_post(cls,id):
+        posts = Post.query.filter_by(post_id=id).all()
+        return posts
+
     def __repr__(self):
         return f"Post('{self.title}', '{self.date_posted}')"

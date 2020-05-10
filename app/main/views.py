@@ -22,7 +22,7 @@ def index():
 @login_required
 def new_post():
     form = PostForm()
-
+    
     if form.validate_on_submit():
         post = Post(title = form.title.data, content = form.content.data, user = current_user)
         db.session.add(post)
@@ -32,12 +32,39 @@ def new_post():
     title = 'New Post' 
     return render_template('posts.html',title = title,form = form)
 
+@main.route('/post/<int:post_id>')
+def post(post_id):
+    post = Post.query.get_or_404(post_id)
+    return render_template('that_post.html', post = post )
+
+@main.route('/post/<int:post_id>/update',methods = ['GET','POST'])
+@login_required
+def update_post(post_id):
+    post = Post.query.get_or_404(post_id)
+    if post.user != current_user:
+        abort(403)
+    form = PostForm()
+    if form.validate_on_submit():
+       post.title = form.title.data  
+       post.content = form.content.data
+       db.session.commit()
+       flash('Your past has been updated!')
+       return redirect(url_for('.post', post_id=post.id))
+    elif request.method == 'GET':
+        form.title.data = post.title
+        form.content.data = post.content
+    title = 'Update Post'
+    return render_template('posts.html',title = title,form = form)
+
+
+
 @main.route('/home', methods = ['GET','POST'])
 def home():
     '''
     View root page function that returns the home page and its data
     '''
-    posts = Post.query.all()
+    page = request.args.get('page',1,type=int)
+    posts = Post.query.paginate(page=page,per_page=1)
     title = 'Home - Welcome to My BLog'
     return render_template('home.html', title = title, posts = posts)
 
@@ -80,3 +107,14 @@ def update_pic(uname):
         user.profile_pic_path = path
         db.session.commit()
     return redirect(url_for('main.profile',uname=uname))
+
+@main.route('/post/<int:post_id>/delete',methods = ['POST'])
+@login_required
+def delete_post(post_id):
+    post = Post.query.get_or_404(post_id)
+    if post.user != current_user:
+        abort(403)
+    db.session.delete(post)
+    db.session.commit()
+    flash('Your post has been deleted!')
+    return redirect(url_for('.home'))
