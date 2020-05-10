@@ -1,0 +1,11 @@
+{% extends 'bootstrap/base.html' %}
+{% import 'macros.html' as macro %}
+{% block navbar %}
+{% include 'navbar.html'%}
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    {{ macro.display(posts) }}
+</div>
+{% endblock %}

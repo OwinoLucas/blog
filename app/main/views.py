@@ -1,5 +1,5 @@
 from . import main
-from flask import render_template,request,redirect,url_for,abort,flash
+from flask import render_template,flash,request,redirect,url_for,abort
 from flask_login import login_required,current_user
 from ..models import User,Post
 from .forms import UpdateProfile,PostForm
@@ -24,7 +24,7 @@ def new_post():
     form = PostForm()
 
     if form.validate_on_submit():
-        post = Post(title = form.title.data, content = content.form.data, author = current_user)
+        post = Post(title = form.title.data, content = form.content.data, user = current_user)
         db.session.add(post)
         db.session.commit()
         flash('Your post has been created!', 'success')
