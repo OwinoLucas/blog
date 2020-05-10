@@ -68,6 +68,17 @@ def home():
     title = 'Home - Welcome to My BLog'
     return render_template('home.html', title = title, posts = posts)
 
+@main.route('/user/<string:username>')
+def user_post(username):
+    '''
+    View root page function that returns the home page and its data
+    '''
+    page = request.args.get('page',1,type=int)
+    user = User.query.filter_by(username=username).first_or_404()
+    posts = Post.query.filter_by(user=user).order_by(Post.date_posted.desc()).paginate(page=page,per_page=1)
+    title = 'Home - Welcome to My BLog'
+    return render_template('user_post.html', user=user,title = title, posts = posts)
+
 
 @main.route('/user/<uname>')
 def profile(uname):
