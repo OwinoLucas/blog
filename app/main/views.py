@@ -92,6 +92,17 @@ def user_post(username):
     title = 'Home - Welcome to My BLog'
     return render_template('user_post.html', user=user,title = title, posts = posts)
 
+@main.route('/home/comment/<int:comment_id>')
+def solo_comment(comment_id):
+    '''
+    View root page function that returns the solo_comment page and its data
+    '''
+    #page = request.args.get('page',1,type=int)
+    user = User.query.filter_by(username=username).first_or_404()
+    comments = Comment.query.filter_by(user=user).order_by(Comment.date_posted.desc(comment_id)).all()
+    title = 'Home - Welcome to My BLog'
+    return render_template('solo_comment.html', user=user,title = title, comments = comments)
+
 @main.route('/user/<uname>')
 def profile(uname):
     user = User.query.filter_by(username = uname).first()
@@ -142,3 +153,14 @@ def delete_post(post_id):
     db.session.commit()
     flash('Your post has been deleted!')
     return redirect(url_for('.home'))
+
+@main.route('/home/comment/<int:post_id>/delete',methods = ['POST'])
+@login_required
+def delete_comment(post_id):
+    post = Post.query.get_or_404(post_id)
+    comment = Comment.query.filter_by(post_id = post.id).first()
+    #comment = Comment(comment = comment,user_id = current_user._get_current_object().id,post_id=post_id)
+    db.session.delete(comment)
+    db.session.commit()
+    flash('Your comment has been deleted!')
+    return redirect(url_for('.home',post_id=post_id))
