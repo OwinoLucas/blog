@@ -4,19 +4,9 @@ from flask_login import login_required,current_user
 from ..models import User,Post
 from .forms import UpdateProfile,PostForm
 from .. import db,photos
-
+from ..request import get_quotes
 
 # Views
-
-@main.route('/')
-def index():
-
-    '''
-    View root page function that returns the index page and its data
-    '''
-    
-    title = 'Home - Welcome to my blog'
-    return render_template('index.html', title = title)
 
 @main.route('/post/new',methods = ['GET','POST'])
 @login_required
@@ -48,8 +38,8 @@ def update_post(post_id):
        post.title = form.title.data  
        post.content = form.content.data
        db.session.commit()
-       flash('Your past has been updated!')
-       return redirect(url_for('.post', post_id=post.id))
+       flash('Your post has been updated!')
+       return redirect(url_for('.home', post_id=post.id))
     elif request.method == 'GET':
         form.title.data = post.title
         form.content.data = post.content
@@ -63,19 +53,20 @@ def home():
     '''
     View root page function that returns the home page and its data
     '''
-    page = request.args.get('page',1,type=int)
-    posts = Post.query.order_by(Post.date_posted.desc()).paginate(page=page,per_page=1)
+    #quotes = get_quotes()
+    #page = request.args.get('page',1,type=int)
+    posts = Post.query.order_by(Post.date_posted.desc()).all()
     title = 'Home - Welcome to My BLog'
     return render_template('home.html', title = title, posts = posts)
 
-@main.route('/user/<string:username>')
+@main.route('/user/post/<string:username>')
 def user_post(username):
     '''
     View root page function that returns the home page and its data
     '''
-    page = request.args.get('page',1,type=int)
+    #page = request.args.get('page',1,type=int)
     user = User.query.filter_by(username=username).first_or_404()
-    posts = Post.query.filter_by(user=user).order_by(Post.date_posted.desc()).paginate(page=page,per_page=1)
+    posts = Post.query.filter_by(user=user).order_by(Post.date_posted.desc()).all()
     title = 'Home - Welcome to My BLog'
     return render_template('user_post.html', user=user,title = title, posts = posts)
 

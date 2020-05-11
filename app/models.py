@@ -63,3 +63,14 @@ class Post(db.Model):
 
     def __repr__(self):
         return f"Post('{self.title}', '{self.date_posted}')"
+
+class Quote:
+    """
+    class that contains quotes objects
+    """
+    def __init__(self,id,author,quote,permalink):
+        self.id =id
+        self.author = author
+        self.quote = quote
+        self.permalink = permalink
+  
