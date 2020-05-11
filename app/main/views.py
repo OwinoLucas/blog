@@ -1,8 +1,8 @@
 from . import main
 from flask import render_template,flash,request,redirect,url_for,abort
 from flask_login import login_required,current_user
-from ..models import User,Post
-from .forms import UpdateProfile,PostForm
+from ..models import User,Post,Comment
+from .forms import UpdateProfile,PostForm,CommentForm
 from .. import db,photos
 from ..request import get_quotes
 
@@ -26,6 +26,28 @@ def new_post():
 def post(post_id):
     post = Post.query.get_or_404(post_id)
     return render_template('that_post.html', post = post )
+
+@main.route('/home/comment/<int:post_id>',methods = ['GET','POST'])
+@login_required
+def comment(post_id):
+    '''
+    View root page function that returns the comments and its data
+    '''
+    form = CommentForm()
+    post = Post.query.get_or_404(post_id)
+    #if post.user != current_user:
+        #abort(403)
+    if form.validate_on_submit():
+        comment = form.comment.data
+        #date_posted = form.date_posted.data
+        comment = Comment(comment = comment,user_id = current_user._get_current_object().id,post_id=post_id)
+        db.session.add(comment)
+        db.session.commit()
+        flash('Your comment has been posted!')
+        return redirect(url_for('.comment',post_id=post_id))
+    
+    all_comments = Comment.query.filter_by(post_id = post.id).all()
+    return render_template("comments.html",form=form, comment = all_comments,post = post)
 
 @main.route('/post/<int:post_id>/update',methods = ['GET','POST'])
 @login_required
@@ -62,14 +84,13 @@ def home():
 @main.route('/user/post/<string:username>')
 def user_post(username):
     '''
-    View root page function that returns the home page and its data
+    View root page function that returns the user_post page and its data
     '''
     #page = request.args.get('page',1,type=int)
     user = User.query.filter_by(username=username).first_or_404()
     posts = Post.query.filter_by(user=user).order_by(Post.date_posted.desc()).all()
     title = 'Home - Welcome to My BLog'
     return render_template('user_post.html', user=user,title = title, posts = posts)
-
 
 @main.route('/user/<uname>')
 def profile(uname):
@@ -98,6 +119,7 @@ def update_profile(uname):
         return redirect(url_for('.profile',uname=user.username))
 
     return render_template('profile/update.html',form =form)
+
 
 @main.route('/user/<uname>/update/pic',methods= ['POST'])
 @login_required

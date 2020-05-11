@@ -12,7 +12,9 @@
                 height="50px" style="border-radius: 50%;">
             <a class="mr-2"
                 href="{{ url_for('.user_post', username=post.user.username)}}">{{ post.user.username }}</a>&nbsp;&nbsp;
-            <small class="text-muted">{{ post.date_posted.strftime("%d-%m-%Y") }}</small>
+            <small class="text-muted">{{ post.date_posted.strftime("%d-%m-%Y, %H:%M:%S") }}</small>
+            <a href="{{ url_for('.comment', post_id = post.id) }}" class="btn btn-primary"
+                style="float: right;">Comment</a>
         </div>
         <h3><a href="{{ url_for('.post',post_id=post.id)}}">{{ post.title }}</a></h3>
         <p class=" article-content">{{ post.content }}</p>

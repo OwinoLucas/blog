@@ -1,0 +1,51 @@
+{% extends 'bootstrap/base.html'%}
+{% import 'macros.html' as macro %}
+{% import 'bootstrap/wtf.html' as wtf %}
+{% block navbar %}
+{% include 'navbar.html' %}
+{% endblock %}
+
+
+{% block content %}
+<div class="container">
+    <!--Flash message -->
+    {% for message in get_flashed_messages() %}
+    <div class="alert alert-success">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        {{ message }}
+    </div>
+    {% endfor %}
+
+    <article>
+        <h3><a>{{ post.title }}</a></h3>
+        <p>{{ post.content }}</p>
+
+    </article>
+    <div class="row">
+        <div class="col-md-6">
+
+            {{wtf.quick_form(form)}}
+        </div>
+
+
+        <div class="container text-center">
+            {% if comment %}
+            {% for comm in comment %}
+
+            <blockquote class="blockquote text-right">
+                <p class="mb-0">{{ comm.comment }}</p>
+                <footer class="blockquote-footer">Posted by {{ comm.user.username }} on
+                    <cite>{{ comm.date_posted.strftime("%d-%m-%Y, %H:%M:%S") }}</cite></footer>
+            </blockquote>
+            {% endfor %}
+            {% else %}
+            <h3>This post does not does not have any comments yet !</h3>
+            {%endif%}
+
+
+        </div>
+
+
+    </div>
+</div>
+{% endblock %}
