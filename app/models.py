@@ -20,6 +20,7 @@ class User(UserMixin,db.Model):
     email = db.Column(db.String(255),unique = True,index = True)
     bio = db.Column(db.String(255))
     post = db.relationship('Post', backref='user', lazy='dynamic')
+    comment = db.relationship('Comment', backref='user', lazy='dynamic')
     profile_pic_path = db.Column(db.String())
     pass_secure = db.Column(db.String(255))
     
@@ -51,6 +52,7 @@ class Post(db.Model):
     content = db.Column(db.Text)
     date_posted = db.Column(db.DateTime, default = datetime.utcnow)
     user_id = db.Column(db.Integer,db.ForeignKey('users.id'))
+    comment = db.relationship('Comment', backref='post', lazy='dynamic')
 
     def save_post(self):
         db.session.add(self)
@@ -63,6 +65,24 @@ class Post(db.Model):
 
     def __repr__(self):
         return f"Post('{self.title}', '{self.date_posted}')"
+
+class Comment(db.Model):
+    """
+    class that contains comment objects
+    """
+    __tablename__ = 'comments'
+
+    id = db.Column(db.Integer, primary_key = True)
+    comment = db.Column(db.Text)
+    date_posted = db.Column(db.DateTime, default = datetime.utcnow)
+    user_id = db.Column(db.Integer,db.ForeignKey('users.id'))
+    post_id = db.Column(db.Integer,db.ForeignKey('posts.id'))
+
+    def __repr__(self):
+        return f"Comment('{self.comment}','{self.date_posted}')"
+
+
+
 
 class Quote:
     """
