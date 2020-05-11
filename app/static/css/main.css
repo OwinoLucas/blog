@@ -1,3 +1,11 @@
+body {
+    background-image: url('../photos/img8.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: fixed;
+    color: white;
+}
+
 .media content-section {
     padding: 10px;
 
