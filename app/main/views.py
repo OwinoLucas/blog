@@ -4,9 +4,21 @@ from flask_login import login_required,current_user
 from ..models import User,Post,Comment
 from .forms import UpdateProfile,PostForm,CommentForm
 from .. import db,photos
-from ..request import get_quotes
+from ..requests import get_quotes
+from ..email import mail_message
 
 # Views
+
+@main.route('/')
+def index():
+    """
+    view index page and its data
+    """
+    title = 'My Blog'
+    #fetch quotes
+    quotes = get_quotes()
+    print(quotes)
+    return render_template('index.html', title = title, quotes = quotes )
 
 @main.route('/post/new',methods = ['GET','POST'])
 @login_required
@@ -14,9 +26,11 @@ def new_post():
     form = PostForm()
     
     if form.validate_on_submit():
+        #user = User(email = form.email.data, username = form.username.data,password = form.password.data)
         post = Post(title = form.title.data, content = form.content.data, user = current_user)
         db.session.add(post)
         db.session.commit()
+        #mail_message("New Post Alert!","email/alert_user",user.email,user=user)
         flash('Your post has been created!', 'success')
         return redirect(url_for('.home'))
     title = 'New Post' 
@@ -46,7 +60,7 @@ def comment(post_id):
         flash('Your comment has been posted!')
         return redirect(url_for('.comment',post_id=post_id))
     
-    all_comments = Comment.query.filter_by(post_id = post.id).all()
+    all_comments = Comment.query.order_by(Comment.date_posted.desc()).all()
     return render_template("comments.html",form=form, comment = all_comments,post = post)
 
 @main.route('/post/<int:post_id>/update',methods = ['GET','POST'])
@@ -158,9 +172,19 @@ def delete_post(post_id):
 @login_required
 def delete_comment(post_id):
     post = Post.query.get_or_404(post_id)
+    if post.user != current_user:
+        403    
     comment = Comment.query.filter_by(post_id = post.id).first()
     #comment = Comment(comment = comment,user_id = current_user._get_current_object().id,post_id=post_id)
     db.session.delete(comment)
     db.session.commit()
     flash('Your comment has been deleted!')
-    return redirect(url_for('.home',post_id=post_id))
+    return redirect(url_for('.comment',post_id=post_id))
+
+
+@main.route('/home/subscribe')
+@login_required
+def subscribe():
+    if post.user != current_user:
+        abort(403)
+    

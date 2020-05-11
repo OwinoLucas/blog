@@ -1,0 +1,14 @@
+{% extends 'bootstrap/base.html' %}
+
+{% block navbar %}
+{% include 'navbar.html'%}
+{% endblock %}
+
+
+{% block content %}
+<div class="container">
+    <h3> Quote of the day </h3>
+    <h4>{{ quotes.quote}}</h4>
+    <p>By {{quotes.author}}</p>
+</div>
+{% endblock %}
