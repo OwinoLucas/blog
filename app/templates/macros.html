@@ -1,6 +1,6 @@
 {% macro display(posts) %}
 
-<article class="container text-center">
+<div class="container text-center">
     <button class="btn btn-danger" style="float: left;"><a>Subscribe</a></button>
     {% if posts %}
     {% for post in posts %}
@@ -32,5 +32,5 @@
     {% endfor %}
     {% endif %}
 
-</article>
+</div>
 {% endmacro %}
