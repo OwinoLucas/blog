@@ -49,12 +49,10 @@ def comment(post_id):
     '''
     form = CommentForm()
     post = Post.query.get_or_404(post_id)
-    #if post.user != current_user:
-        #abort(403)
     if form.validate_on_submit():
         comment = form.comment.data
         #date_posted = form.date_posted.data
-        comment = Comment(comment = comment,user_id = current_user._get_current_object().id,post_id=post_id)
+        comment = Comment(comment = comment,user_id = current_user._get_current_object().id,post_id=post.id)
         db.session.add(comment)
         db.session.commit()
         flash('Your comment has been posted!')
@@ -171,13 +169,14 @@ def delete_post(post_id):
 @main.route('/home/comment/<int:post_id>/delete',methods = ['POST'])
 @login_required
 def delete_comment(post_id):
-    post = Post.query.get_or_404(post_id)
-    if post.user != current_user:
-        403    
+    post = Post.query.get_or_404(post_id)  
     comment = Comment.query.filter_by(post_id = post.id).first()
-    #comment = Comment(comment = comment,user_id = current_user._get_current_object().id,post_id=post_id)
-    db.session.delete(comment)
-    db.session.commit()
+    try:
+        db.session.delete(comment)
+        db.session.commit()
+    except:
+        'UnmappedInstanceError'
+    
     flash('Your comment has been deleted!')
     return redirect(url_for('.comment',post_id=post_id))
 

@@ -39,12 +39,12 @@
                 <footer class="blockquote-footer">Posted by {{ comm.user.username }} on
                     <cite>{{ comm.date_posted.strftime("%d %b %Y, %H:%M %p") }}</cite></footer>
             </blockquote>
-            {% if post.user == current_user %}
+
             <div>
                 <button type="button" class="btn btn-danger btn-sm m-1" data-toggle="modal"
                     data-target="#deleteeModal">Delete</button>
             </div>
-            {% endif %}
+
             {% else %}
             <h3>This post does not have any comments yet !</h3>
             {% endfor %}
