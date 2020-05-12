@@ -58,8 +58,8 @@ def comment(post_id):
         flash('Your comment has been posted!')
         return redirect(url_for('.comment',post_id=post_id))
     
-    #all_comments = Comment.query.order_by(Comment.date_posted.desc()).all()
-    return render_template("comments.html",form=form, comment = comment,post = post)
+    all_comments = Comment.query.order_by(Comment.date_posted.desc()).all()
+    return render_template("comments.html",form=form, comment = all_comments,post = post)
 
 @main.route('/post/<int:post_id>/update',methods = ['GET','POST'])
 @login_required
