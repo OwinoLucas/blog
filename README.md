@@ -2,17 +2,6 @@
 #### By Lucas Otieno Owino
 ## Description
  A personal blogging website where you can create and share your opinions and other users can read and comment on them. Additionally, add a feature that displays random quotes to inspire your users. 
-## Installation Requirements
-  Clone this repository and navigate to the folder.
-  Run the following commands to allow functionality of the app:-
-  * sudo add-apt-repository ppa:jonathonf/python-3.6
-  * sudo apt-get update
-  * sudo apt-get install python3.6
-  * sudo apt-get install python3-pip
-  * sudo apt-get install python3.6-venv
-  * python3.6 -m venv virtual
-  * source venv/bin/activate
-  * pip install -r requirements.txt
 ## User Story
 * As a user, I would like to view the blog posts on the site
 * As a user, I would like to comment on blog posts
@@ -43,7 +32,7 @@
   * Postgressql
   * Heroku
 ## BDD
-Given a user inputs there credentials when said user logs in he/she should be able to create and share their opinions and other users can read and comment on them. Additionally, add a feature that displays random quotes to inspire your users. 
+Given a user inputs there credentials, when said user logs in he/she should be able to create and share their opinions/posts and other users can read and comment on them. Additionally, add a feature that displays random quotes to inspire your users. 
 >Login Inputs
 
 | Inputs |  Description |
@@ -60,7 +49,7 @@ Given a user inputs there credentials when said user logs in he/she should be ab
 | Password  | Account password, ``eg pass1234``|
 | Confirm Password  | Account password, ``eg pass1234``|
 
-> Pitches inputs
+> Blog Post inputs
 
 | Inputs | Description  |
 |---|---|
